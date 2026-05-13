@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/sign_in`,
     {
       method: "POST",
-      headers: { "Content-Type": "applicationjson" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         user: {
           email: body.email,
