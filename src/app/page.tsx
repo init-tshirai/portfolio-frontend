@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 type Profile = {
   name: string
   role: string
