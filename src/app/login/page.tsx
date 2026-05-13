@@ -17,7 +17,7 @@ export default function LoginPage() {
     setErrorMessage("")
     setIsSubmitting(true)
 
-    const res = await fetch("api/autho/login", {
+    const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,37 +39,49 @@ export default function LoginPage() {
   }
 
   return (
-    <main>
-      <h1>ログイン</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="email">メールアドレス</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+    <main className="login-page">
+      <section className="login-card">
+        <h1 className="login-title">ログイン</h1>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="login-field">
+            <label className="login-label" htmlFor="email">
+              メールアドレス
+            </label>
+            <input
+              className="login-input"
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-        <div>
-          <label htmlFor="password">パスワード</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+          <div className="login-field">
+            <label className="login-label" htmlFor="password">
+              パスワード
+            </label>
+            <input
+              className="login-input"
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-        {errorMessage && <p>{errorMessage}</p>}
+          {errorMessage && <p className="login-error">{errorMessage}</p>}
 
-        <button type="submit" disabled={isSubmitting || email === "" || password === ""}>
-          {isSubmitting ? "ログイン中..." : "ログイン"}
-        </button>
-      </form>
+          <button
+            className="login-button"
+            type="submit"
+            disabled={isSubmitting || email === "" || password === ""}
+          >
+            {isSubmitting ? "ログイン中..." : "ログイン"}
+          </button>
+        </form>
+      </section>
     </main>
   )
 }
