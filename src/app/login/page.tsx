@@ -42,9 +42,34 @@ export default function LoginPage() {
     <main>
       <h1>ログイン</h1>
       <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="email">メールアドレス</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
 
+        <div>
+          <label htmlFor="password">パスワード</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        {errorMessage && <p>{errorMessage}</p>}
+
+        <button type="submit" disabled={isSubmitting || email === "" || password === ""}>
+          {isSubmitting ? "ログイン中..." : "ログイン"}
+        </button>
       </form>
     </main>
-
   )
 }
