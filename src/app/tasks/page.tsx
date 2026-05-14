@@ -3,14 +3,25 @@ import { redirect } from "next/navigation"
 
 import LogoutButton from "../components/LogoutButton"
 
+type TaskStatus = "not_started" | "in_progress" | "resolved" | "completed" | "feedback" | "rejected"
+
 type Task = {
   id: number
   title: string
-  status: string
+  status: TaskStatus
   due_date: string
   user: {
     name: string
   }
+}
+
+const taskStatusLabels: Record<TaskStatus, string> = {
+  not_started: "未着手",
+  in_progress: "進行中",
+  resolved: "解決済み",
+  completed: "完了",
+  feedback: "フィードバック",
+  rejected: "却下",
 }
 
 async function getTasks(): Promise<Task[]> {
@@ -58,11 +69,11 @@ export default async function TasksPage() {
             <table className="min-w-full divide-y divide-zinc-200 text-left text-sm">
               <thead className="bg-zinc-100 text-xs font-semibold uppercase tracking-wide text-zinc-600">
                 <tr>
-                  <th className="px-4 py-3">tasks.id</th>
-                  <th className="px-4 py-3">tasks.title</th>
-                  <th className="px-4 py-3">tasks.status</th>
-                  <th className="px-4 py-3">tasks.due_date</th>
-                  <th className="px-4 py-3">tasks.user.name</th>
+                  <th className="px-4 py-3">タスクID</th>
+                  <th className="px-4 py-3">タイトル</th>
+                  <th className="px-4 py-3">ステータス</th>
+                  <th className="px-4 py-3">期日</th>
+                  <th className="px-4 py-3">担当者</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
@@ -71,7 +82,7 @@ export default async function TasksPage() {
                     <tr key={task.id} className="hover:bg-zinc-50">
                       <td className="whitespace-nowrap px-4 py-3 font-medium">{task.id}</td>
                       <td className="px-4 py-3">{task.title}</td>
-                      <td className="whitespace-nowrap px-4 py-3">{task.status}</td>
+                      <td className="whitespace-nowrap px-4 py-3">{taskStatusLabels[task.status]}</td>
                       <td className="whitespace-nowrap px-4 py-3">{task.due_date}</td>
                       <td className="whitespace-nowrap px-4 py-3">{task.user.name ?? "-"}</td>
                     </tr>
