@@ -325,8 +325,16 @@ export default async function TasksPage({
                 {tasks.length > 0 ? (
                   tasks.map((task) => (
                     <tr key={task.id} className="hover:bg-zinc-50">
-                      <td className="whitespace-nowrap px-4 py-3 font-medium">{task.id}</td>
-                      <td className="px-4 py-3">{task.title}</td>
+                      <td className="whitespace-nowrap px-4 py-3 font-medium">
+                        <Link className="text-blue-600 hover:text-blue-700" href={`/tasks/${task.id}`}>
+                          {task.id}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link className="font-semibold text-blue-600 hover:text-blue-700" href={`/tasks/${task.id}`}>
+                          {task.title}
+                        </Link>
+                      </td>
                       <td className="whitespace-nowrap px-4 py-3">{taskStatusLabels[task.status]}</td>
                       <td className="whitespace-nowrap px-4 py-3">{task.due_date ?? "-"}</td>
                       <td className="whitespace-nowrap px-4 py-3">{task.user.name ?? "-"}</td>
