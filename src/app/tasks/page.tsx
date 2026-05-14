@@ -184,7 +184,15 @@ export default async function TasksPage({
             <p className="text-sm font-semibold text-blue-600">Tasks</p>
             <h1 className="mt-1 text-3xl font-bold">タスク一覧</h1>
           </div>
-          <LogoutButton />
+          <div className="flex items-center gap-3">
+            <Link
+              className="rounded-lg border border-blue-700 bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
+              href="/tasks/new"
+            >
+              新規作成
+            </Link>
+            <LogoutButton />
+          </div>
         </div>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
