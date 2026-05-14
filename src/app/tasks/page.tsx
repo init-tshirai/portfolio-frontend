@@ -25,6 +25,11 @@ type Task = {
   }
 }
 
+type UserOption = {
+  id: number
+  name: string
+}
+
 const taskStatusLabels: Record<TaskStatus, string> = {
   not_started: "未着手",
   in_progress: "進行中",
@@ -54,7 +59,7 @@ function buildTaskSearchParams(searchParams: TaskSearchParams) {
   return params
 }
 
-async function getTasks(searchParams: TaskSearchParams): Promise<Task[]> {
+async function getAccessToken() {
   const cookieStore = await cookies()
   const token = cookieStore.get("access_token")?.value
 
@@ -62,6 +67,10 @@ async function getTasks(searchParams: TaskSearchParams): Promise<Task[]> {
     redirect("/login")
   }
 
+  return token
+}
+
+async function getTasks(searchParams: TaskSearchParams, token: string): Promise<Task[]> {
   const query = buildTaskSearchParams(searchParams)
   const url = new URL(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/tasks`)
   url.search = query.toString()
@@ -84,6 +93,25 @@ async function getTasks(searchParams: TaskSearchParams): Promise<Task[]> {
   return res.json()
 }
 
+async function getUsers(token: string): Promise<UserOption[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/users`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  })
+
+  if(res.status === 401) {
+    redirect("/login")
+  }
+
+  if(!res.ok) {
+    throw new Error("担当者一覧の取得に失敗しました。")
+  }
+
+  return res.json()
+}
+
 export default async function TasksPage({
   searchParams,
 }: {
@@ -95,7 +123,11 @@ export default async function TasksPage({
   const dueDateFrom = getSearchValue(currentSearchParams.due_date_from) ?? ""
   const dueDateTo = getSearchValue(currentSearchParams.due_date_to) ?? ""
   const userId = getSearchValue(currentSearchParams.user_id) ?? ""
-  const tasks = await getTasks(currentSearchParams)
+  const token = await getAccessToken()
+  const [tasks, users] = await Promise.all([
+    getTasks(currentSearchParams, token),
+    getUsers(token),
+  ])
 
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-10 text-zinc-900">
@@ -171,16 +203,21 @@ export default async function TasksPage({
 
             <div className="grid gap-1.5">
               <label className="text-sm font-semibold text-zinc-700" htmlFor="user_id">
-                担当者ID
+                担当者
               </label>
-              <input
+              <select
                 className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
                 defaultValue={userId}
                 id="user_id"
-                min="1"
                 name="user_id"
-                type="number"
-              />
+              >
+                <option value="">すべて</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="flex items-end gap-3 md:col-span-2 lg:col-span-5">
