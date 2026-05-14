@@ -14,6 +14,15 @@ type Task = {
     id: number
     name: string
   }
+  comments: {
+    id: number
+    content: string
+    task_update_info: string | null
+    user: {
+      id: number
+      name: string
+    }
+  }[]
 }
 
 const taskStatusLabels: Record<TaskStatus, string> = {
@@ -113,6 +122,24 @@ export default async function TaskDetailPage({
             </div>
           </dl>
         </section>
+
+        {task.comments.length > 0 && (
+        <section className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+          <div className="border-b border-zinc-200 p-6">
+            <p className="text-sm font-semibold text-zinc-500">コメント</p>
+          </div>
+
+          <div className="p-6">
+            <ul className="space-y-4">
+              {task.comments.map((comment) => (
+                <li key={comment.id}>
+                  <p className="text-sm">{comment.content}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+        )}
       </div>
     </main>
   )
