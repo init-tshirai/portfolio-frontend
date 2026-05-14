@@ -12,6 +12,8 @@ type TaskSearchParams = {
   due_date_from?: string | string[]
   due_date_to?: string | string[]
   user_id?: string | string[]
+  page?: string | string[]
+  limit?: string | string[]
 }
 
 type Task = {
@@ -30,6 +32,19 @@ type UserOption = {
   name: string
 }
 
+type PaginatedTasks = {
+  tasks: Task[]
+  pagination: {
+    totalCount: number
+    currentPage: number
+    perPage: number
+    totalPages: number
+  }
+}
+
+const DEFAULT_LIMIT = 20
+const limitOptions = [10, 20, 50, 100]
+
 const taskStatusLabels: Record<TaskStatus, string> = {
   not_started: "未着手",
   in_progress: "進行中",
@@ -39,16 +54,27 @@ const taskStatusLabels: Record<TaskStatus, string> = {
   rejected: "却下",
 }
 
-const taskSearchKeys = ["title", "status", "due_date_from", "due_date_to", "user_id"] as const
+const taskApiParamKeys = ["title", "status", "due_date_from", "due_date_to", "user_id", "page", "limit"] as const
 
 function getSearchValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value
 }
 
+function getHeaderNumber(headers: Headers, key: string, defaultValue: number) {
+  const headerValue = headers.get(key)
+
+  if(headerValue === null) {
+    return defaultValue
+  }
+
+  const value = Number(headerValue)
+  return Number.isFinite(value) ? value : defaultValue
+}
+
 function buildTaskSearchParams(searchParams: TaskSearchParams) {
   const params = new URLSearchParams()
 
-  taskSearchKeys.forEach((key) => {
+  taskApiParamKeys.forEach((key) => {
     const value = getSearchValue(searchParams[key])?.trim()
 
     if(value) {
@@ -57,6 +83,13 @@ function buildTaskSearchParams(searchParams: TaskSearchParams) {
   })
 
   return params
+}
+
+function buildTasksPageHref(searchParams: TaskSearchParams, page: number) {
+  const params = buildTaskSearchParams(searchParams)
+  params.set("page", String(page))
+
+  return `/tasks?${params.toString()}`
 }
 
 async function getAccessToken() {
@@ -70,7 +103,7 @@ async function getAccessToken() {
   return token
 }
 
-async function getTasks(searchParams: TaskSearchParams, token: string): Promise<Task[]> {
+async function getTasks(searchParams: TaskSearchParams, token: string): Promise<PaginatedTasks> {
   const query = buildTaskSearchParams(searchParams)
   const url = new URL(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/tasks`)
   url.search = query.toString()
@@ -90,7 +123,15 @@ async function getTasks(searchParams: TaskSearchParams, token: string): Promise<
     throw new Error("タスク一覧の取得に失敗しました。")
   }
 
-  return res.json()
+  return {
+    tasks: await res.json(),
+    pagination: {
+      totalCount: getHeaderNumber(res.headers, "X-Total-Count", 0),
+      currentPage: getHeaderNumber(res.headers, "X-Current-Page", 1),
+      perPage: getHeaderNumber(res.headers, "X-Per-Page", DEFAULT_LIMIT),
+      totalPages: getHeaderNumber(res.headers, "X-Total-Pages", 0),
+    },
+  }
 }
 
 async function getUsers(token: string): Promise<UserOption[]> {
@@ -123,11 +164,17 @@ export default async function TasksPage({
   const dueDateFrom = getSearchValue(currentSearchParams.due_date_from) ?? ""
   const dueDateTo = getSearchValue(currentSearchParams.due_date_to) ?? ""
   const userId = getSearchValue(currentSearchParams.user_id) ?? ""
+  const limit = getSearchValue(currentSearchParams.limit) ?? String(DEFAULT_LIMIT)
   const token = await getAccessToken()
-  const [tasks, users] = await Promise.all([
+  const [taskResult, users] = await Promise.all([
     getTasks(currentSearchParams, token),
     getUsers(token),
   ])
+  const { tasks, pagination } = taskResult
+  const firstItemNumber = tasks.length > 0 ? (pagination.currentPage - 1) * pagination.perPage + 1 : 0
+  const lastItemNumber = tasks.length > 0 ? firstItemNumber + tasks.length - 1 : 0
+  const hasPreviousPage = pagination.currentPage > 1
+  const hasNextPage = pagination.totalPages > 0 && pagination.currentPage < pagination.totalPages
 
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-10 text-zinc-900">
@@ -141,7 +188,9 @@ export default async function TasksPage({
         </div>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <form className="grid gap-4 md:grid-cols-2 lg:grid-cols-5" method="get">
+          <form className="grid gap-4 md:grid-cols-2 lg:grid-cols-6" method="get">
+            <input name="page" type="hidden" value="1" />
+
             <div className="grid gap-1.5">
               <label className="text-sm font-semibold text-zinc-700" htmlFor="title">
                 タイトル
@@ -170,6 +219,24 @@ export default async function TasksPage({
                 {Object.entries(taskStatusLabels).map(([value, label]) => (
                   <option key={value} value={value}>
                     {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid gap-1.5">
+              <label className="text-sm font-semibold text-zinc-700" htmlFor="limit">
+                表示件数
+              </label>
+              <select
+                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                defaultValue={limit}
+                id="limit"
+                name="limit"
+              >
+                {limitOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}件
                   </option>
                 ))}
               </select>
@@ -220,7 +287,7 @@ export default async function TasksPage({
               </select>
             </div>
 
-            <div className="flex items-end gap-3 md:col-span-2 lg:col-span-5">
+            <div className="flex items-end gap-3 md:col-span-2 lg:col-span-6">
               <button
                 className="rounded-lg border border-blue-700 bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
                 type="submit"
@@ -268,6 +335,41 @@ export default async function TasksPage({
             </table>
           </div>
         </section>
+
+        <div className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-700 shadow-sm md:flex-row md:items-center md:justify-between">
+          <p>
+            全{pagination.totalCount}件中 {firstItemNumber}-{lastItemNumber}件を表示
+          </p>
+          <div className="flex items-center gap-2">
+            {hasPreviousPage ? (
+              <Link
+                className="rounded-lg border border-zinc-300 px-3 py-2 font-semibold hover:bg-zinc-50"
+                href={buildTasksPageHref(currentSearchParams, pagination.currentPage - 1)}
+              >
+                前へ
+              </Link>
+            ) : (
+              <span className="rounded-lg border border-zinc-200 px-3 py-2 font-semibold text-zinc-400">
+                前へ
+              </span>
+            )}
+            <span className="px-2">
+              {pagination.currentPage} / {Math.max(pagination.totalPages, 1)}
+            </span>
+            {hasNextPage ? (
+              <Link
+                className="rounded-lg border border-zinc-300 px-3 py-2 font-semibold hover:bg-zinc-50"
+                href={buildTasksPageHref(currentSearchParams, pagination.currentPage + 1)}
+              >
+                次へ
+              </Link>
+            ) : (
+              <span className="rounded-lg border border-zinc-200 px-3 py-2 font-semibold text-zinc-400">
+                次へ
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     </main>
   )
