@@ -7,9 +7,9 @@ type Task = {
   id: number
   title: string
   status: string
-  user_id: number
+  due_date: string
   user: {
-    name: string | null
+    name: string
   }
 }
 
@@ -61,7 +61,7 @@ export default async function TasksPage() {
                   <th className="px-4 py-3">tasks.id</th>
                   <th className="px-4 py-3">tasks.title</th>
                   <th className="px-4 py-3">tasks.status</th>
-                  <th className="px-4 py-3">tasks.user_id</th>
+                  <th className="px-4 py-3">tasks.due_date</th>
                   <th className="px-4 py-3">tasks.user.name</th>
                 </tr>
               </thead>
@@ -72,7 +72,7 @@ export default async function TasksPage() {
                       <td className="whitespace-nowrap px-4 py-3 font-medium">{task.id}</td>
                       <td className="px-4 py-3">{task.title}</td>
                       <td className="whitespace-nowrap px-4 py-3">{task.status}</td>
-                      <td className="whitespace-nowrap px-4 py-3">{task.user_id}</td>
+                      <td className="whitespace-nowrap px-4 py-3">{task.due_date}</td>
                       <td className="whitespace-nowrap px-4 py-3">{task.user.name ?? "-"}</td>
                     </tr>
                   ))
