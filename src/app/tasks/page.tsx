@@ -225,24 +225,6 @@ export default async function TasksPage({
             </div>
 
             <div className="grid gap-1.5">
-              <label className="text-sm font-semibold text-zinc-700" htmlFor="limit">
-                表示件数
-              </label>
-              <select
-                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-                defaultValue={limit}
-                id="limit"
-                name="limit"
-              >
-                {limitOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}件
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="grid gap-1.5">
               <label className="text-sm font-semibold text-zinc-700" htmlFor="due_date_from">
                 期日 From
               </label>
@@ -282,6 +264,24 @@ export default async function TasksPage({
                 {users.map((user) => (
                   <option key={user.id} value={user.id}>
                     {user.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid gap-1.5">
+              <label className="text-sm font-semibold text-zinc-700" htmlFor="limit">
+                表示件数
+              </label>
+              <select
+                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+                defaultValue={limit}
+                id="limit"
+                name="limit"
+              >
+                {limitOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}件
                   </option>
                 ))}
               </select>
