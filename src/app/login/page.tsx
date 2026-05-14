@@ -39,16 +39,16 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="login-page">
-      <section className="login-card">
-        <h1 className="login-title">ログイン</h1>
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="login-field">
-            <label className="login-label" htmlFor="email">
+    <main className="grid min-h-screen place-items-center p-6">
+      <section className="w-full max-w-[420px] rounded-2xl border border-zinc-300 bg-white p-8 shadow-[0_16px_40px_rgb(15_23_42_/_8%)]">
+        <h1 className="mb-6 text-[28px] font-bold text-zinc-900">ログイン</h1>
+        <form className="grid gap-[18px]" onSubmit={handleSubmit}>
+          <div className="grid gap-2">
+            <label className="text-sm font-semibold text-zinc-700" htmlFor="email">
               メールアドレス
             </label>
             <input
-              className="login-input"
+              className="w-full rounded-lg border border-zinc-400 bg-white px-3 py-2.5 text-base text-zinc-900 outline-none focus:border-blue-600 focus:shadow-[0_0_0_3px_rgb(37_99_235_/_16%)]"
               type="email"
               id="email"
               value={email}
@@ -57,12 +57,12 @@ export default function LoginPage() {
             />
           </div>
 
-          <div className="login-field">
-            <label className="login-label" htmlFor="password">
+          <div className="grid gap-2">
+            <label className="text-sm font-semibold text-zinc-700" htmlFor="password">
               パスワード
             </label>
             <input
-              className="login-input"
+              className="w-full rounded-lg border border-zinc-400 bg-white px-3 py-2.5 text-base text-zinc-900 outline-none focus:border-blue-600 focus:shadow-[0_0_0_3px_rgb(37_99_235_/_16%)]"
               type="password"
               id="password"
               value={password}
@@ -71,10 +71,14 @@ export default function LoginPage() {
             />
           </div>
 
-          {errorMessage && <p className="login-error">{errorMessage}</p>}
+          {errorMessage && (
+            <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
+              {errorMessage}
+            </p>
+          )}
 
           <button
-            className="login-button"
+            className="cursor-pointer rounded-lg border border-blue-700 bg-blue-600 px-4 py-[11px] text-base font-bold text-white enabled:hover:bg-blue-700 disabled:cursor-not-allowed disabled:border-zinc-300 disabled:bg-zinc-200 disabled:text-zinc-500"
             type="submit"
             disabled={isSubmitting || email === "" || password === ""}
           >
