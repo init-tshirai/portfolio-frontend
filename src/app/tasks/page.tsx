@@ -186,7 +186,7 @@ export default async function TasksPage({
         </div>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <form className="grid gap-4 md:grid-cols-2 lg:grid-cols-6" method="get">
+          <form className="grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(280px,2fr)_repeat(5,minmax(150px,1fr))]" method="get">
             <input name="page" type="hidden" value="1" />
 
             <div className="grid gap-1.5">
@@ -285,7 +285,7 @@ export default async function TasksPage({
               </select>
             </div>
 
-            <div className="flex items-end gap-3 md:col-span-2 lg:col-span-6">
+            <div className="flex items-end gap-3 md:col-span-2 xl:col-span-6">
               <button
                 className="rounded-lg border border-blue-700 bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
                 type="submit"
