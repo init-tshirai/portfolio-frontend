@@ -1,36 +1,17 @@
+import Link from "next/link"
+
 import LogoutButton from "./components/LogoutButton"
 
-/*
-type Profile = {
-  name: string
-  role: string
-  message: string
-}
-  */
-
 export default async function HomePage() {
-  /*
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/profile`,
-    {
-      cache: "no-store",
-    }
-  )
-
-  const profile: Profile = await res.json()
-
   return (
-    <main>
-      <h1>{profile.name}</h1>
-      <p>{profile.role}</p>
-      <p>{profile.message}</p>
-    </main>
-  );
-  */
-
-  return (
-    <main>
-      <h1>Home</h1>
-      <LogoutButton />
+    <main className="grid min-h-screen place-items-center bg-zinc-50 p-6 text-zinc-900">
+      <div className="grid gap-4 rounded-2xl border border-zinc-200 bg-white p-8 shadow-sm">
+        <h1>Home</h1>
+        <Link className="font-semibold text-blue-600 hover:text-blue-700" href="/tasks">
+          タスク一覧へ
+        </Link>
+        <LogoutButton />
+      </div>
     </main>
   )
 }
