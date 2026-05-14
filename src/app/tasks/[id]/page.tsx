@@ -3,6 +3,7 @@ import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
 import { taskStatusLabels, type TaskStatus } from "../taskStatus"
+import DeleteTaskButton from "./DeleteTaskButton"
 
 type Task = {
   id: number
@@ -145,6 +146,32 @@ export default async function TaskDetailPage({
     redirect(`/tasks/${id}`)
   }
 
+  async function deleteTask() {
+    "use server"
+
+    const token = await getAccessToken()
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/tasks/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if(res.status === 401) {
+      redirect("/login")
+    }
+
+    if(res.status === 404) {
+      notFound()
+    }
+
+    if(!res.ok) {
+      throw new Error("タスクの削除に失敗しました。")
+    }
+
+    redirect("/tasks")
+  }
+
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-10 text-zinc-900">
       <div className="mx-auto grid max-w-3xl gap-6">
@@ -157,6 +184,7 @@ export default async function TaskDetailPage({
             <Link className="text-sm font-semibold text-blue-600 hover:text-blue-700" href={`/tasks/${task.id}?edit=1`}>
               編集
             </Link>
+            <DeleteTaskButton action={deleteTask} />
             <Link className="text-sm font-semibold text-zinc-600 hover:text-zinc-900" href="/tasks">
               一覧へ戻る
             </Link>
