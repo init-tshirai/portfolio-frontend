@@ -15,6 +15,7 @@ type Task = {
     name: string
   }
   comments: {
+    created_at: string
     id: number
     content: string
     task_update_info: string | null
@@ -123,23 +124,40 @@ export default async function TaskDetailPage({
           </dl>
         </section>
 
-        {task.comments.length > 0 && (
-        <section className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
-          <div className="border-b border-zinc-200 p-6">
-            <p className="text-sm font-semibold text-zinc-500">コメント</p>
-          </div>
+        <div className="grid gap-4">
+          <h2 className="text-xl font-bold">コメント</h2>
 
-          <div className="p-6">
-            <ul className="space-y-4">
-              {task.comments.map((comment) => (
-                <li key={comment.id}>
-                  <p className="text-sm">{comment.content}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-        )}
+          {task.comments.length > 0 ? (
+            task.comments.map((comment) => (
+              <section
+                className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm"
+                key={comment.id}
+              >
+                <div className="border-b border-zinc-200 p-6">
+                  <p className="text-sm font-semibold text-zinc-500">
+                    {comment.user.name}（ID: {comment.user.id}） が {comment.created_at} に更新。
+                  </p>
+                </div>
+
+                <dl className="grid divide-y divide-zinc-100">
+                  <div className="grid gap-1 p-6 md:grid-cols-[160px_1fr] md:gap-4">
+                    <dt className="text-sm font-semibold text-zinc-500">更新内容</dt>
+                    <dd className="text-sm">{comment.task_update_info || "コメントしました"}</dd>
+                  </div>
+
+                  <div className="grid gap-1 p-6 md:grid-cols-[160px_1fr] md:gap-4">
+                    <dt className="text-sm font-semibold text-zinc-500">コメント</dt>
+                    <dd className="whitespace-pre-wrap text-sm leading-6">{comment.content}</dd>
+                  </div>
+                </dl>
+              </section>
+            ))
+          ) : (
+            <section className="rounded-2xl border border-zinc-200 bg-white p-6 text-sm text-zinc-500 shadow-sm">
+              コメントはまだありません。
+            </section>
+          )}
+        </div>
       </div>
     </main>
   )
