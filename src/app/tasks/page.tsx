@@ -3,8 +3,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import LogoutButton from "../components/LogoutButton"
-
-type TaskStatus = "not_started" | "in_progress" | "resolved" | "completed" | "feedback" | "rejected"
+import { taskStatusLabels, type TaskStatus } from "./taskStatus"
 
 type TaskSearchParams = {
   title?: string | string[]
@@ -44,15 +43,6 @@ type PaginatedTasks = {
 
 const DEFAULT_LIMIT = 20
 const limitOptions = [10, 20, 50, 100]
-
-const taskStatusLabels: Record<TaskStatus, string> = {
-  not_started: "未着手",
-  in_progress: "進行中",
-  resolved: "解決済み",
-  completed: "完了",
-  feedback: "フィードバック",
-  rejected: "却下",
-}
 
 const taskApiParamKeys = ["title", "status", "due_date_from", "due_date_to", "user_id", "page", "limit"] as const
 

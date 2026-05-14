@@ -2,7 +2,7 @@ import { cookies } from "next/headers"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
-type TaskStatus = "not_started" | "in_progress" | "resolved" | "completed" | "feedback" | "rejected"
+import { taskStatusLabels, type TaskStatus } from "../taskStatus"
 
 type Task = {
   id: number
@@ -24,15 +24,6 @@ type Task = {
       name: string
     }
   }[]
-}
-
-const taskStatusLabels: Record<TaskStatus, string> = {
-  not_started: "未着手",
-  in_progress: "進行中",
-  resolved: "解決済み",
-  completed: "完了",
-  feedback: "フィードバック",
-  rejected: "却下",
 }
 
 async function getAccessToken() {
