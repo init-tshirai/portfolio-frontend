@@ -35,7 +35,7 @@ export default async function HomePage() {
 
   if(currentUser.role === "normal") {
     redirect("/tasks")
-  }
+  } // todo: adminならユーザー一覧へリダイレクト。
 
   return (
     <main className="grid min-h-screen place-items-center bg-zinc-50 p-6 text-zinc-900">
