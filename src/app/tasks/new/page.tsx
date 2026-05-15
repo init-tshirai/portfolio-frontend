@@ -2,7 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { requireAccessToken } from "../../lib/auth"
-import { getUsers } from "../../lib/users"
+import { getUserOptions } from "../../lib/users"
 import NewTaskForm, { type CreateTaskState } from "./NewTaskForm"
 
 async function createTask(_prevState: CreateTaskState, formData: FormData): Promise<CreateTaskState> {
@@ -50,7 +50,7 @@ async function createTask(_prevState: CreateTaskState, formData: FormData): Prom
 
 export default async function NewTaskPage() {
   const token = await requireAccessToken()
-  const users = await getUsers(token)
+  const users = await getUserOptions(token)
 
   return (
     <main className="min-h-screen bg-zinc-50 px-6 py-10 text-zinc-900">

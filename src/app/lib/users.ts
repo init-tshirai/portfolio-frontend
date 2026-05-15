@@ -5,8 +5,8 @@ export type UserOption = {
   name: string
 }
 
-export async function getUsers(token: string): Promise<UserOption[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/users`, {
+export async function getUserOptions(token: string): Promise<UserOption[]> {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/users/options`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

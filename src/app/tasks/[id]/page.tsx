@@ -2,7 +2,7 @@ import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
 import { requireAccessToken } from "../../lib/auth"
-import { getUsers } from "../../lib/users"
+import { getUserOptions } from "../../lib/users"
 import { taskStatusLabels, type TaskStatus } from "../taskStatus"
 import DeleteTaskButton from "./DeleteTaskButton"
 import TaskEditForm, { type UpdateTaskState } from "./TaskEditForm"
@@ -73,7 +73,7 @@ export default async function TaskDetailPage({
   const token = await requireAccessToken()
   const [task, users] = await Promise.all([
     getTask(id, token),
-    isEditing ? getUsers(token) : Promise.resolve([]),
+    isEditing ? getUserOptions(token) : Promise.resolve([]),
   ])
 
   async function updateTask(_prevState: UpdateTaskState, formData: FormData): Promise<UpdateTaskState> {

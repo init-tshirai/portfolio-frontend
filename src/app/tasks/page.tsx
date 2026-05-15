@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 
 import LogoutButton from "../components/LogoutButton"
 import { requireAccessToken } from "../lib/auth"
-import { getUsers } from "../lib/users"
+import { getUserOptions } from "../lib/users"
 import { taskStatusLabels, type TaskStatus } from "./taskStatus"
 
 type TaskSearchParams = {
@@ -124,7 +124,7 @@ export default async function TasksPage({
   const token = await requireAccessToken()
   const [taskResult, users] = await Promise.all([
     getTasks(currentSearchParams, token),
-    getUsers(token),
+    getUserOptions(token),
   ])
   const { tasks, pagination } = taskResult
   const firstItemNumber = tasks.length > 0 ? (pagination.currentPage - 1) * pagination.perPage + 1 : 0
