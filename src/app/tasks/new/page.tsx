@@ -1,23 +1,12 @@
-import { cookies } from "next/headers"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 
+import { getAccessToken } from "../../lib/auth"
 import NewTaskForm, { type CreateTaskState } from "./NewTaskForm"
 
 type UserOption = {
   id: number
   name: string
-}
-
-async function getAccessToken() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get("access_token")?.value
-
-  if(!token) {
-    redirect("/login")
-  }
-
-  return token
 }
 
 async function getUsers(token: string): Promise<UserOption[]> {

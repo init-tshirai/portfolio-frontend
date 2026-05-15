@@ -1,7 +1,7 @@
-import { cookies } from "next/headers"
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
+import { getAccessToken } from "../../lib/auth"
 import { taskStatusLabels, type TaskStatus } from "../taskStatus"
 import DeleteTaskButton from "./DeleteTaskButton"
 import TaskEditForm, { type UpdateTaskState } from "./TaskEditForm"
@@ -39,17 +39,6 @@ type TaskDetailSearchParams = {
 
 function getSearchValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value
-}
-
-async function getAccessToken() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get("access_token")?.value
-
-  if(!token) {
-    redirect("/login")
-  }
-
-  return token
 }
 
 async function getTask(id: string, token: string): Promise<Task> {

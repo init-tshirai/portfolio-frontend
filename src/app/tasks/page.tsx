@@ -1,8 +1,8 @@
-import { cookies } from "next/headers"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import LogoutButton from "../components/LogoutButton"
+import { getAccessToken } from "../lib/auth"
 import { taskStatusLabels, type TaskStatus } from "./taskStatus"
 
 type TaskSearchParams = {
@@ -80,17 +80,6 @@ function buildTasksPageHref(searchParams: TaskSearchParams, page: number) {
   params.set("page", String(page))
 
   return `/tasks?${params.toString()}`
-}
-
-async function getAccessToken() {
-  const cookieStore = await cookies()
-  const token = cookieStore.get("access_token")?.value
-
-  if(!token) {
-    redirect("/login")
-  }
-
-  return token
 }
 
 async function getTasks(searchParams: TaskSearchParams, token: string): Promise<PaginatedTasks> {
