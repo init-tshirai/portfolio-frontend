@@ -116,6 +116,7 @@ export default function TaskEditForm({ action, task, users }: TaskEditFormProps)
             className="min-h-32 rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             id="comment"
             name="comment"
+            required
           />
         </div>
 
