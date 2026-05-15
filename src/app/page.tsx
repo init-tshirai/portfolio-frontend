@@ -7,7 +7,7 @@ import { requireAccessToken } from "./lib/auth"
 type CurrentUser = {
   id: number
   name: string
-  role: "normal" | "admin" | number
+  role: "normal" | "admin"
 }
 
 async function getCurrentUser(token: string): Promise<CurrentUser> {
@@ -33,7 +33,7 @@ export default async function HomePage() {
   const token = await requireAccessToken()
   const currentUser = await getCurrentUser(token)
 
-  if(currentUser.role === "normal" || currentUser.role === 0) {
+  if(currentUser.role === "normal") {
     redirect("/tasks")
   }
 
