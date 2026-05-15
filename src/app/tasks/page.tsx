@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 
 import LogoutButton from "../components/LogoutButton"
 import { requireAccessToken } from "../lib/auth"
+import { getUsers } from "../lib/users"
 import { taskStatusLabels, type TaskStatus } from "./taskStatus"
 
 type TaskSearchParams = {
@@ -24,11 +25,6 @@ type Task = {
     id: number
     name: string
   }
-}
-
-type UserOption = {
-  id: number
-  name: string
 }
 
 type PaginatedTasks = {
@@ -111,25 +107,6 @@ async function getTasks(searchParams: TaskSearchParams, token: string): Promise<
       totalPages: getHeaderNumber(res.headers, "X-Total-Pages", 0),
     },
   }
-}
-
-async function getUsers(token: string): Promise<UserOption[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/users`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
-  })
-
-  if(res.status === 401) {
-    redirect("/login")
-  }
-
-  if(!res.ok) {
-    throw new Error("担当者一覧の取得に失敗しました。")
-  }
-
-  return res.json()
 }
 
 export default async function TasksPage({

@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
 import { requireAccessToken } from "../../lib/auth"
+import { getUsers } from "../../lib/users"
 import { taskStatusLabels, type TaskStatus } from "../taskStatus"
 import DeleteTaskButton from "./DeleteTaskButton"
 import TaskEditForm, { type UpdateTaskState } from "./TaskEditForm"
@@ -26,11 +27,6 @@ type Task = {
       name: string
     }
   }[]
-}
-
-type UserOption = {
-  id: number
-  name: string
 }
 
 type TaskDetailSearchParams = {
@@ -59,25 +55,6 @@ async function getTask(id: string, token: string): Promise<Task> {
 
   if(!res.ok) {
     throw new Error("タスク詳細の取得に失敗しました。")
-  }
-
-  return res.json()
-}
-
-async function getUsers(token: string): Promise<UserOption[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/users`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
-  })
-
-  if(res.status === 401) {
-    redirect("/login")
-  }
-
-  if(!res.ok) {
-    throw new Error("担当者一覧の取得に失敗しました。")
   }
 
   return res.json()
