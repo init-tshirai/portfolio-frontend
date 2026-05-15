@@ -292,7 +292,7 @@ export default async function TasksPage({
               >
                 検索
               </button>
-              <Link className="px-2 py-2 text-sm font-semibold text-zinc-600 hover:text-zinc-900" href="/tasks">
+              <Link className="rounded border border-black px-2 py-2 text-sm font-semibold text-zinc-600 hover:text-zinc-900" href="/tasks">
                 クリア
               </Link>
             </div>
