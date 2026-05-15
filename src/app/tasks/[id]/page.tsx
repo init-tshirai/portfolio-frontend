@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
-import { getAccessToken } from "../../lib/auth"
+import { requireAccessToken } from "../../lib/auth"
 import { taskStatusLabels, type TaskStatus } from "../taskStatus"
 import DeleteTaskButton from "./DeleteTaskButton"
 import TaskEditForm, { type UpdateTaskState } from "./TaskEditForm"
@@ -93,7 +93,7 @@ export default async function TaskDetailPage({
   const { id } = await params
   const currentSearchParams = await searchParams
   const isEditing = getSearchValue(currentSearchParams.edit) === "1"
-  const token = await getAccessToken()
+  const token = await requireAccessToken()
   const [task, users] = await Promise.all([
     getTask(id, token),
     isEditing ? getUsers(token) : Promise.resolve([]),
@@ -102,7 +102,7 @@ export default async function TaskDetailPage({
   async function updateTask(_prevState: UpdateTaskState, formData: FormData): Promise<UpdateTaskState> {
     "use server"
 
-    const token = await getAccessToken()
+    const token = await requireAccessToken()
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/tasks/${id}`, {
       method: "PATCH",
       headers: {
@@ -150,7 +150,7 @@ export default async function TaskDetailPage({
   async function deleteTask() {
     "use server"
 
-    const token = await getAccessToken()
+    const token = await requireAccessToken()
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/tasks/${id}`, {
       method: "DELETE",
       headers: {

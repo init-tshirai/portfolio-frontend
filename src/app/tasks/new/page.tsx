@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 
-import { getAccessToken } from "../../lib/auth"
+import { requireAccessToken } from "../../lib/auth"
 import NewTaskForm, { type CreateTaskState } from "./NewTaskForm"
 
 type UserOption = {
@@ -31,7 +31,7 @@ async function getUsers(token: string): Promise<UserOption[]> {
 async function createTask(_prevState: CreateTaskState, formData: FormData): Promise<CreateTaskState> {
   "use server"
 
-  const token = await getAccessToken()
+  const token = await requireAccessToken()
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/tasks`, {
     method: "POST",
     headers: {
@@ -72,7 +72,7 @@ async function createTask(_prevState: CreateTaskState, formData: FormData): Prom
 }
 
 export default async function NewTaskPage() {
-  const token = await getAccessToken()
+  const token = await requireAccessToken()
   const users = await getUsers(token)
 
   return (

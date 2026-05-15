@@ -2,7 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import LogoutButton from "../components/LogoutButton"
-import { getAccessToken } from "../lib/auth"
+import { requireAccessToken } from "../lib/auth"
 import { taskStatusLabels, type TaskStatus } from "./taskStatus"
 
 type TaskSearchParams = {
@@ -144,7 +144,7 @@ export default async function TasksPage({
   const dueDateTo = getSearchValue(currentSearchParams.due_date_to) ?? ""
   const userId = getSearchValue(currentSearchParams.user_id) ?? ""
   const limit = getSearchValue(currentSearchParams.limit) ?? String(DEFAULT_LIMIT)
-  const token = await getAccessToken()
+  const token = await requireAccessToken()
   const [taskResult, users] = await Promise.all([
     getTasks(currentSearchParams, token),
     getUsers(token),
