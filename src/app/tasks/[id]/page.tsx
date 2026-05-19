@@ -2,10 +2,12 @@ import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
 import { requireAccessToken } from "../../lib/auth"
+import { requireTaskReadPermission } from "../../lib/currentUser"
 import { getUserOptions } from "../../lib/users"
 import { taskStatusLabels, type TaskStatus } from "../taskStatus"
 import DeleteTaskButton from "./DeleteTaskButton"
 import TaskEditForm, { type UpdateTaskState } from "./TaskEditForm"
+import { getCurrentUser } from "../../lib/currentUser"
 
 type Task = {
   id: number
@@ -53,6 +55,10 @@ async function getTask(id: string, token: string): Promise<Task> {
     notFound()
   }
 
+  if(res.status === 403) {
+    redirect("/forbidden")
+  }
+
   if(!res.ok) {
     throw new Error("タスク詳細の取得に失敗しました。")
   }
@@ -71,10 +77,16 @@ export default async function TaskDetailPage({
   const currentSearchParams = await searchParams
   const isEditing = getSearchValue(currentSearchParams.edit) === "1"
   const token = await requireAccessToken()
+  await requireTaskReadPermission(token)
   const [task, users] = await Promise.all([
     getTask(id, token),
     isEditing ? getUserOptions(token) : Promise.resolve([]),
   ])
+  const currentUser = await getCurrentUser(token)
+
+  if (!currentUser.permissions.tasks.update && isEditing) {
+    redirect("/forbidden")
+  }
 
   async function updateTask(_prevState: UpdateTaskState, formData: FormData): Promise<UpdateTaskState> {
     "use server"
@@ -100,6 +112,10 @@ export default async function TaskDetailPage({
 
     if(res.status === 401) {
       redirect("/login")
+    }
+
+    if(res.status === 403) {
+      redirect("/forbidden")
     }
 
     if(res.status === 404) {
@@ -139,6 +155,10 @@ export default async function TaskDetailPage({
       redirect("/login")
     }
 
+    if(res.status === 403) {
+      redirect("/forbidden")
+    }
+
     if(res.status === 404) {
       notFound()
     }
@@ -159,10 +179,14 @@ export default async function TaskDetailPage({
             <h1 className="mt-1 text-3xl font-bold">タスク詳細</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Link className="text-sm font-semibold text-blue-600 hover:text-blue-700" href={`/tasks/${task.id}?edit=1`}>
-              編集
-            </Link>
-            <DeleteTaskButton action={deleteTask} />
+            {currentUser.permissions.tasks.update && (
+              <Link className="text-sm font-semibold text-blue-600 hover:text-blue-700" href={`/tasks/${task.id}?edit=1`}>
+                編集
+              </Link>
+            )}
+            {currentUser.permissions.tasks.destroy && (
+              <DeleteTaskButton action={deleteTask} />
+            )}
             <Link className="text-sm font-semibold text-zinc-600 hover:text-zinc-900" href="/tasks">
               一覧へ戻る
             </Link>
