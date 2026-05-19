@@ -3,40 +3,7 @@ import { redirect } from "next/navigation"
 
 import LogoutButton from "./components/LogoutButton"
 import { requireAccessToken } from "./lib/auth"
-import { userAgent } from "next/server"
-
-type CurrentUser = {
-  id: number
-  name: string
-  role: "normal" | "admin"
-  permissions: {
-    tasks: {
-      read: boolean
-      create: boolean
-      update: boolean
-      destroy: boolean
-    }
-  }
-}
-
-async function getCurrentUser(token: string): Promise<CurrentUser> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/profile`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    cache: "no-store",
-  })
-
-  if(res.status === 401) {
-    redirect("/login")
-  }
-
-  if(!res.ok) {
-    throw new Error("ログインユーザー情報の取得に失敗しました。")
-  }
-
-  return res.json()
-}
+import { getCurrentUser } from "./lib/currentUser"
 
 export default async function HomePage() {
   const token = await requireAccessToken()
