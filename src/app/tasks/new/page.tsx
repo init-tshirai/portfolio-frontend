@@ -31,8 +31,7 @@ async function createTask(_prevState: CreateTaskState, formData: FormData): Prom
   }
 
   if(res.status === 403) {
-    // todo: 権限不足の旨を表示
-    redirect("/tasks")
+    redirect("/tasks?error=forbidden")
   }
 
   if(res.status === 422) {

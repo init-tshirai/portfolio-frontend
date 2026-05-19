@@ -3,11 +3,20 @@ import { redirect } from "next/navigation"
 
 import LogoutButton from "./components/LogoutButton"
 import { requireAccessToken } from "./lib/auth"
+import { userAgent } from "next/server"
 
 type CurrentUser = {
   id: number
   name: string
   role: "normal" | "admin"
+  permissions: {
+    tasks: {
+      read: boolean
+      create: boolean
+      update: boolean
+      destroy: boolean
+    }
+  }
 }
 
 async function getCurrentUser(token: string): Promise<CurrentUser> {

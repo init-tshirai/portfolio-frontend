@@ -103,8 +103,7 @@ export default async function TaskDetailPage({
     }
 
     if(res.status === 403) {
-      // todo: 権限不足の旨を表示
-      redirect(`/tasks/${id}`)
+      redirect(`/tasks/${id}?error=forbidden`)
     }
 
     if(res.status === 404) {
