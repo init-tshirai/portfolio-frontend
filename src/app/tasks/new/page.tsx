@@ -2,6 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 
 import { requireAccessToken } from "../../lib/auth"
+import { requireTaskCreatePermission } from "../../lib/currentUser"
 import { getUserOptions } from "../../lib/users"
 import NewTaskForm, { type CreateTaskState } from "./NewTaskForm"
 
@@ -31,7 +32,7 @@ async function createTask(_prevState: CreateTaskState, formData: FormData): Prom
   }
 
   if(res.status === 403) {
-    redirect("/tasks?error=forbidden")
+    redirect("/forbidden")
   }
 
   if(res.status === 422) {
@@ -54,6 +55,7 @@ async function createTask(_prevState: CreateTaskState, formData: FormData): Prom
 
 export default async function NewTaskPage() {
   const token = await requireAccessToken()
+  await requireTaskCreatePermission(token)
   const users = await getUserOptions(token)
 
   return (

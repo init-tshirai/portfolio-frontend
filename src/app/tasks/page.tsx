@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 
 import LogoutButton from "../components/LogoutButton"
 import { requireAccessToken } from "../lib/auth"
+import { requireTaskReadPermission } from "../lib/currentUser"
 import { getUserOptions } from "../lib/users"
 import { taskStatusLabels, type TaskStatus } from "./taskStatus"
 
@@ -94,6 +95,10 @@ async function getTasks(searchParams: TaskSearchParams, token: string): Promise<
     redirect("/login")
   }
 
+  if(res.status === 403) {
+    redirect("/forbidden")
+  }
+
   if(!res.ok) {
     throw new Error("タスク一覧の取得に失敗しました。")
   }
@@ -122,6 +127,7 @@ export default async function TasksPage({
   const userId = getSearchValue(currentSearchParams.user_id) ?? ""
   const limit = getSearchValue(currentSearchParams.limit) ?? String(DEFAULT_LIMIT)
   const token = await requireAccessToken()
+  const currentUser = await requireTaskReadPermission(token)
   const [taskResult, users] = await Promise.all([
     getTasks(currentSearchParams, token),
     getUserOptions(token),
@@ -141,12 +147,14 @@ export default async function TasksPage({
             <h1 className="mt-1 text-3xl font-bold">タスク一覧</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Link
-              className="rounded-lg border border-blue-700 bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
-              href="/tasks/new"
-            >
-              新規作成
-            </Link>
+            {currentUser.permissions.tasks.create ? (
+              <Link
+                className="rounded-lg border border-blue-700 bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
+                href="/tasks/new"
+              >
+                新規作成
+              </Link>
+            ) : null}
             <LogoutButton />
           </div>
         </div>

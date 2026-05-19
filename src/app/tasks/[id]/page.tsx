@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
 import { requireAccessToken } from "../../lib/auth"
+import { requireTaskReadPermission } from "../../lib/currentUser"
 import { getUserOptions } from "../../lib/users"
 import { taskStatusLabels, type TaskStatus } from "../taskStatus"
 import DeleteTaskButton from "./DeleteTaskButton"
@@ -53,6 +54,10 @@ async function getTask(id: string, token: string): Promise<Task> {
     notFound()
   }
 
+  if(res.status === 403) {
+    redirect("/forbidden")
+  }
+
   if(!res.ok) {
     throw new Error("タスク詳細の取得に失敗しました。")
   }
@@ -71,6 +76,7 @@ export default async function TaskDetailPage({
   const currentSearchParams = await searchParams
   const isEditing = getSearchValue(currentSearchParams.edit) === "1"
   const token = await requireAccessToken()
+  await requireTaskReadPermission(token)
   const [task, users] = await Promise.all([
     getTask(id, token),
     isEditing ? getUserOptions(token) : Promise.resolve([]),
@@ -103,7 +109,7 @@ export default async function TaskDetailPage({
     }
 
     if(res.status === 403) {
-      redirect(`/tasks/${id}?error=forbidden`)
+      redirect("/forbidden")
     }
 
     if(res.status === 404) {
@@ -141,6 +147,10 @@ export default async function TaskDetailPage({
 
     if(res.status === 401) {
       redirect("/login")
+    }
+
+    if(res.status === 403) {
+      redirect("/forbidden")
     }
 
     if(res.status === 404) {

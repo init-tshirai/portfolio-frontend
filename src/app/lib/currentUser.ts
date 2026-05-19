@@ -32,3 +32,31 @@ export async function getCurrentUser(token: string): Promise<CurrentUser> {
 
   return res.json()
 }
+
+export function getDefaultLandingPath(user: CurrentUser): string {
+  if(user.permissions.tasks.read) {
+    return "/tasks"
+  }
+
+  return "/forbidden"
+}
+
+export async function requireTaskReadPermission(token: string): Promise<CurrentUser> {
+  const user = await getCurrentUser(token)
+
+  if(!user.permissions.tasks.read) {
+    redirect("/forbidden")
+  }
+
+  return user
+}
+
+export async function requireTaskCreatePermission(token: string): Promise<CurrentUser> {
+  const user = await getCurrentUser(token)
+
+  if(!user.permissions.tasks.create) {
+    redirect("/forbidden")
+  }
+
+  return user
+}
