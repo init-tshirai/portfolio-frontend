@@ -147,14 +147,14 @@ export default async function TasksPage({
             <h1 className="mt-1 text-3xl font-bold">タスク一覧</h1>
           </div>
           <div className="flex items-center gap-3">
-            {currentUser.permissions.tasks.create ? (
+            {currentUser.permissions.tasks.create && (
               <Link
                 className="rounded-lg border border-blue-700 bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
                 href="/tasks/new"
               >
                 新規作成
               </Link>
-            ) : null}
+            )}
             <LogoutButton />
           </div>
         </div>
