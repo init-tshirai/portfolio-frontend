@@ -30,6 +30,11 @@ async function createTask(_prevState: CreateTaskState, formData: FormData): Prom
     redirect("/login")
   }
 
+  if(res.status === 403) {
+    // todo: 権限不足の旨を表示
+    redirect("/tasks")
+  }
+
   if(res.status === 422) {
     const data = await res.json().catch(() => null) as { errors?: unknown } | null
     const errors = Array.isArray(data?.errors)
