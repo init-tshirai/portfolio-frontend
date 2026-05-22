@@ -1,33 +1,44 @@
 # Portfolio Frontend
 
-タスク管理アプリのフロントエンド(Next.js)です。
+タスク管理アプリのフロントエンド(Next.js)です。<br>
 [バックエンド](https://github.com/init-tshirai/portfolio-backend) と組み合わせて利用します。
 
 ## デモ環境
-URL: https://portfolio-frontend-self-psi.vercel.app/
-メールアドレス: normal@example.com
+
+URL: https://portfolio-frontend-self-psi.vercel.app/ <br>
+メールアドレス: normal@example.com <br>
 パスワード: password
 
 ---
 
 ## 目次
 
-- [使用技術](#使用技術)
-- [アーキテクチャ](#アーキテクチャ)
-- [画面構成](#画面構成)
-- [環境変数](#環境変数)
-- [技術選定理由](#技術選定理由)
-- [ローカル環境でのセットアップ](#ローカル環境でのセットアップ)
-- [デプロイ（Vercel）](#デプロイvercel)
-- [ディレクトリ構成（主要）](#ディレクトリ構成（主要）)
-- [最後に](#最後に)
+- [Portfolio Frontend](#portfolio-frontend)
+  - [デモ環境](#デモ環境)
+  - [目次](#目次)
+    - [使用技術](#使用技術)
+  - [アーキテクチャ](#アーキテクチャ)
+    - [認証の流れ](#認証の流れ)
+    - [認可（フロントエンド側）](#認可フロントエンド側)
+  - [画面構成](#画面構成)
+    - [ER図・API設計](#er図api設計)
+  - [環境変数](#環境変数)
+    - [ローカル（`.env.local`）](#ローカルenvlocal)
+    - [Vercel](#vercel)
+  - [技術選定理由](#技術選定理由)
+  - [ローカル環境でのセットアップ](#ローカル環境でのセットアップ)
+    - [前提](#前提)
+    - [手順](#手順)
+  - [デプロイ（Vercel）](#デプロイvercel)
+  - [ディレクトリ構成（主要）](#ディレクトリ構成主要)
+  - [最後に](#最後に)
 
 ---
 
 ### 使用技術
 
-フロントエンド: Next.js, Tailwind CSS
-バックエンド: Ruby on Rails, MySQL
+フロントエンド: Next.js, Tailwind CSS <br>
+バックエンド: Ruby on Rails, MySQL <br>
 インフラ: Vercel(Next.js), Railway(Ruby on Rails)
 
 ---
@@ -71,8 +82,6 @@ flowchart TB
 4. 以降、Server Component が Cookie からトークンを読み、Rails API をサーバー側で呼び出す
 5. ログアウト時は `DELETE /api/auth/logout` 経由で Rails の sign_out を呼び、Cookie を削除
 
-> ブラウザから Rails API を直接呼ばないため、CORS 設定は通常不要です。
-
 ### 認可（フロントエンド側）
 
 - `GET /api/v1/profile` で権限を取得
@@ -92,9 +101,9 @@ flowchart TB
 | `/tasks/[id]` | タスク詳細・更新・削除 |
 | `/forbidden` | 権限不足（リダイレクトの終端） |
 
-### ER 図・API 詳細
+### ER図・API設計
 
-[バックエンド](https://github.com/init-tshirai/portfolio-backend) の README を参照してください。
+バックエンドの [ER図](https://github.com/init-tshirai/portfolio-backend/#er-%E5%9B%B3) 、 [API設計](https://github.com/init-tshirai/portfolio-backend/#api-%E8%A8%AD%E8%A8%88) を参照してください。
 
 ---
 
@@ -115,8 +124,8 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
 |--------|-----|------|
 | `NEXT_PUBLIC_API_BASE_URL` | `https://your-api.example.com` | 本番 Rails API の URL |
 
-**Settings → Environment Variables** に設定し、デプロイし直してください。
-`.env.local` は Git に含まれないため、Vercel 側での設定が必須です。
+**Settings → Environment Variables** に設定し、デプロイし直してください。 <br>
+`.env.local` は Git の管理対象外のため、Vercel 側での設定が必須です。
 
 ---
 
@@ -147,11 +156,11 @@ $ cp env.local.example .env.local
 $ npm run dev
 ```
 
-ブラウザで `http://localhost:3000` を開きます。
+ブラウザで `http://localhost:3000` を開きます。 <br>
 ログイン画面が表示されたらフロントエンドの起動は成功です。
 
-以下でログインに成功したらバックエンドとの連携も成功です。
-メールアドレス: normal@example.com
+以下でログインに成功したらバックエンドとの連携も成功です。 <br>
+メールアドレス: normal@example.com <br>
 パスワード: password
 
 ---
@@ -185,14 +194,14 @@ src/app/
 
 ## 最後に
 
-本アプリケーションは、機能規模だけで言えばRails単体で十分実現可能ですが、
+本アプリケーションは、機能規模だけで言えばRails単体で十分実現可能ですが、 <br>
 実務で多い「Rails API + フロントエンド」の構成を一通り設計・実装することを目的として作成しました。
 
-認証、認可の実装方法や、フロントとバックエンドの責務の組み立てに苦労しました。
+認証、認可の実装方法や、フロントとバックエンドの責務の組み立てに苦労しました。 <br>
 将来的に別のクライアント（モバイルアプリなど）が追加された場合も再利用ように、基本的にバックエンドに任せるようにしています。
 
-「Rais API + フロントエンド」の構成はRails単体に比べて環境や言語が分かれるため、デメリットもあると考えます。
-・運用負担向上（環境変数の管理、セキュリティ設定の複雑化）
-・可用性低下の危険
-・開発要員確保の難易度増（組織による）
+「Rais API + フロントエンド」の構成はRails単体に比べて環境や言語が分かれるため、デメリットもあると考えます。 <br>
+・運用負担向上（環境変数の管理、セキュリティ設定の複雑化） <br>
+・可用性低下の危険 <br>
+・開発要員確保の難易度増（組織による） <br>
 アプリケーションの目的・性質によってはRails単体での開発が最適となる可能性もあるため、実務においては柔軟に判断したいと考えます。
