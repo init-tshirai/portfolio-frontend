@@ -7,7 +7,7 @@
 
 URL: https://portfolio-frontend-self-psi.vercel.app/ <br>
 メールアドレス: normal@example.com <br>
-パスワード: password
+パスワード: faipheiz4ieY
 
 ---
 
