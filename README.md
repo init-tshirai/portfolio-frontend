@@ -38,8 +38,8 @@ URL: https://portfolio-frontend-self-psi.vercel.app/ <br>
 ### 使用技術
 
 フロントエンド: Next.js, Tailwind CSS <br>
-バックエンド: Ruby on Rails, MySQL <br>
-インフラ: Vercel(Next.js), Railway(Ruby on Rails)
+バックエンド: Ruby on Rails, PostgreSQL <br>
+インフラ: Vercel(Next.js), Render(Ruby on Rails)
 
 ---
 
