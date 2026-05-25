@@ -43,14 +43,13 @@ URL: https://portfolio-frontend-self-psi.vercel.app/ <br>
 
 ## インフラ構成
 
-[インフラ構成](https://github.com/init-tshirai/portfolio-frontend/docs/infrastructure_architecture.md)
+[インフラ構成](https://github.com/init-tshirai/portfolio-frontend/blob/master/docs/infrastructure_architecture.md)
 
 ---
 
 ## 認証・認可について
 
-[認証・認可について](https://github.com/init-tshirai/portfolio-frontend/docs/auth.md)
-
+[認証・認可について](https://github.com/init-tshirai/portfolio-frontend/blob/master/docs/auth.md)
 
 ---
 
@@ -67,9 +66,9 @@ URL: https://portfolio-frontend-self-psi.vercel.app/ <br>
 
 ## ER図・API設計
 
-[ER図](https://github.com/init-tshirai/portfolio-backend/docs/entity_relationship_diagram.md)
+[ER図](https://github.com/init-tshirai/portfolio-backend/blob/master/docs/entity_relationship_diagram.md)
 
-[API設計](https://github.com/init-tshirai/portfolio-backend/docs/api_design.md)
+[API設計](https://github.com/init-tshirai/portfolio-backend/blob/master/docs/api_design.md)
 
 ---
 
