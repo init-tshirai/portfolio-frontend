@@ -1,9 +1,9 @@
-# Portfolio Frontend
+# タスク管理アプリ（フロントエンド）
+
+## 概要
 
 タスク管理アプリのフロントエンド(Next.js)です。<br>
 [バックエンド](https://github.com/init-tshirai/portfolio-backend) と組み合わせて利用します。
-
-## デモ環境
 
 URL: https://portfolio-frontend-self-psi.vercel.app/ <br>
 メールアドレス: normal@example.com <br>
@@ -13,8 +13,8 @@ URL: https://portfolio-frontend-self-psi.vercel.app/ <br>
 
 ## 目次
 
-- [Portfolio Frontend](#portfolio-frontend)
-  - [デモ環境](#デモ環境)
+- [タスク管理アプリ（フロントエンド）](#タスク管理アプリフロントエンド)
+  - [概要](#概要)
   - [目次](#目次)
     - [使用技術](#使用技術)
   - [アーキテクチャ](#アーキテクチャ)
