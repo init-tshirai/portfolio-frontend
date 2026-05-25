@@ -16,7 +16,7 @@ URL: https://portfolio-frontend-self-psi.vercel.app/ <br>
 - [タスク管理アプリ（フロントエンド）](#タスク管理アプリフロントエンド)
   - [概要](#概要)
   - [目次](#目次)
-    - [使用技術](#使用技術)
+  - [使用技術](#使用技術)
   - [アーキテクチャ](#アーキテクチャ)
     - [認証の流れ](#認証の流れ)
     - [認可（フロントエンド側）](#認可フロントエンド側)
@@ -35,11 +35,11 @@ URL: https://portfolio-frontend-self-psi.vercel.app/ <br>
 
 ---
 
-### 使用技術
+## 使用技術
 
 フロントエンド: Next.js, Tailwind CSS <br>
 バックエンド: Ruby on Rails, PostgreSQL <br>
-インフラ: Vercel(Next.js), Render(Ruby on Rails), supabase(PostgreSQL)
+インフラ: Vercel(Next.js), Render(Ruby on Rails), Supabase(PostgreSQL)
 
 ---
 
