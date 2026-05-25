@@ -39,7 +39,7 @@ URL: https://portfolio-frontend-self-psi.vercel.app/ <br>
 
 フロントエンド: Next.js, Tailwind CSS <br>
 バックエンド: Ruby on Rails, PostgreSQL <br>
-インフラ: Vercel(Next.js), Render(Ruby on Rails)
+インフラ: Vercel(Next.js), Render(Ruby on Rails), supabase(PostgreSQL)
 
 ---
 
@@ -168,11 +168,10 @@ $ npm run dev
 ## デプロイ（Vercel）
 
 1. 本リポジトリを Vercel にインポート
-2. **Root Directory**: `portfolio-frontend`（モノレポの場合）
-3. 環境変数 `NEXT_PUBLIC_API_BASE_URL` に本番 API URL を設定
-4. デプロイ
+2. 環境変数 `NEXT_PUBLIC_API_BASE_URL` にバックエンドのURL を設定
+3. デプロイ
 
-バックエンド API は HTTPS で公開されている必要があります（Cookie に `secure` を付与しており、HTTPS通信時のみCookieが送信されるため）。
+バックエンドのURLはHTTPSで公開されている必要があります（Cookieにsecureを付与しており、HTTPS通信時のみCookieが送信されるため）。
 
 ---
 
