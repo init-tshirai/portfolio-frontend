@@ -15,6 +15,8 @@ type TaskSearchParams = {
   user_id?: string | string[]
   page?: string | string[]
   limit?: string | string[]
+  sort_column?: string | string[]
+  sort_direction?: string | string[]
 }
 
 type Task = {
@@ -39,9 +41,18 @@ type PaginatedTasks = {
 }
 
 const DEFAULT_LIMIT = 20
+const DEFAULT_SORT = "due_date"
+const DEFAULT_DIRECTION = "desc"
 const limitOptions = [10, 20, 50, 100]
+const sortableColumns = [
+  { key: "id", label: "タスクID" },
+  { key: "title", label: "タイトル" },
+  { key: "status", label: "ステータス" },
+  { key: "due_date", label: "期日" },
+  { key: "user", label: "担当者" },
+] as const
 
-const taskApiParamKeys = ["title", "status", "due_date_from", "due_date_to", "user_id", "page", "limit"] as const
+const taskApiParamKeys = ["title", "status", "due_date_from", "due_date_to", "user_id", "page", "limit", "sort_column", "sort_direction"] as const
 
 function getSearchValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value
@@ -77,6 +88,40 @@ function buildTasksPageHref(searchParams: TaskSearchParams, page: number) {
   params.set("page", String(page))
 
   return `/tasks?${params.toString()}`
+}
+
+function getEffectiveSort(searchParams: TaskSearchParams) {
+  const sortColumn = getSearchValue(searchParams.sort_column)
+  const sortDirection = getSearchValue(searchParams.sort_direction)
+
+  if(!sortColumn) {
+    return { sortColumn: DEFAULT_SORT, sortDirection: DEFAULT_DIRECTION }
+  }
+
+  return {
+    sortColumn,
+    sortDirection: sortDirection === "desc" ? "desc" : "asc",
+  }
+}
+
+function buildTasksSortHref(searchParams: TaskSearchParams, sortColumn: string) {
+  const params = buildTaskSearchParams(searchParams)
+  const { sortColumn: currentSortColumn, sortDirection: currentSortDirection } = getEffectiveSort(searchParams)
+  const nextSortDirection = currentSortColumn === sortColumn && currentSortDirection === "asc" ? "desc" : "asc"
+
+  params.set("sort_column", sortColumn)
+  params.set("sort_direction", nextSortDirection)
+  params.set("page", "1")
+
+  return `/tasks?${params.toString()}`
+}
+
+function sortIndicator(sortColumn: string, effectiveSort: { sortColumn: string; sortDirection: string }) {
+  if(effectiveSort.sortColumn !== sortColumn) {
+    return null
+  }
+
+  return effectiveSort.sortDirection === "asc" ? " ↑" : " ↓"
 }
 
 async function getTasks(searchParams: TaskSearchParams, token: string): Promise<PaginatedTasks> {
@@ -126,6 +171,9 @@ export default async function TasksPage({
   const dueDateTo = getSearchValue(currentSearchParams.due_date_to) ?? ""
   const userId = getSearchValue(currentSearchParams.user_id) ?? ""
   const limit = getSearchValue(currentSearchParams.limit) ?? String(DEFAULT_LIMIT)
+  const sortColumn = getSearchValue(currentSearchParams.sort_column) ?? ""
+  const sortDirection = getSearchValue(currentSearchParams.sort_direction) ?? ""
+  const effectiveSort = getEffectiveSort(currentSearchParams)
   const token = await requireAccessToken()
   const currentUser = await requireTaskReadPermission(token)
   const [taskResult, users] = await Promise.all([
@@ -162,6 +210,8 @@ export default async function TasksPage({
         <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
           <form className="grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(280px,2fr)_repeat(5,minmax(150px,1fr))]" method="get">
             <input name="page" type="hidden" value="1" />
+            {sortColumn ? <input name="sort_column" type="hidden" value={sortColumn} /> : null}
+            {sortColumn && sortDirection ? <input name="sort_direction" type="hidden" value={sortDirection} /> : null}
 
             <div className="grid gap-1.5">
               <label className="text-sm font-semibold text-zinc-700" htmlFor="title">
@@ -278,11 +328,17 @@ export default async function TasksPage({
             <table className="min-w-full divide-y divide-zinc-200 text-left text-sm">
               <thead className="bg-zinc-100 text-xs font-semibold uppercase tracking-wide text-zinc-600">
                 <tr>
-                  <th className="px-4 py-3">タスクID</th>
-                  <th className="px-4 py-3">タイトル</th>
-                  <th className="px-4 py-3">ステータス</th>
-                  <th className="px-4 py-3">期日</th>
-                  <th className="px-4 py-3">担当者</th>
+                  {sortableColumns.map(({ key, label }) => (
+                    <th key={key} className="px-4 py-3">
+                      <Link
+                        className="inline-flex items-center text-zinc-600 hover:text-blue-600"
+                        href={buildTasksSortHref(currentSearchParams, key)}
+                      >
+                        {label}
+                        {sortIndicator(key, effectiveSort)}
+                      </Link>
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-100">
